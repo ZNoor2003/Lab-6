@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include "files.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+    FILE* str;
+
+    printf("%d\n", doesExist("new.txt"));
+    write("new.txt", "\nWorks like\na charm!");
+    read("new.txt", &str);
+
+    return 0;
+}
+
+#ifndef FILES_h
+#define FILES_h
+
+void read(char* file, FILE** stream);
+void write(char* file, char* str);
+int doesExist(char* file);
+
+#endif
+
+
+
+int doesExist(char* file) {
+    FILE* fptr;
+    if (!(fptr = fopen(file, "r"))) {
+        return 0;
+    }
+    fclose(fptr);
+    return 1;
+}
+
+void read(char* file, FILE** stream) {
+    *stream = fopen(file, "r");
+    if (*stream == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    char* buff = malloc(10 * sizeof(char));
+
+    while (fgets(buff, 10, *stream)) {
+        printf("%s", buff);
+    }
+
+    fclose(*stream);
+    free(buff);
+}
+
+void write(char* file, char* str) {
+    FILE* stream = fopen(file, "a");
+    if (stream == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(stream, str);
+
+    fclose(stream);
+}
